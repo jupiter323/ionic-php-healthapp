@@ -1,0 +1,411 @@
+<ion-header>
+  <ion-toolbar mode="ios">
+    <ion-title>
+      Health App - BMI
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-row class="tab-part" *ngIf="!bmiResultState && !hiitResultState">
+    <ion-col size="6" class="border-right">
+      <ion-row class="full-height" (click)="openBMI()">
+        <ion-row class="header-icon">
+          <span>
+            <ion-icon slot="icon-only" color="light" mode="ios" name="star"></ion-icon>
+          </span>
+        </ion-row>
+        <ion-row class="header-title">
+          <span>
+            BMI Checker
+          </span>
+        </ion-row>
+      </ion-row>
+    </ion-col>
+
+    <ion-col size="6">
+      <ion-row class="full-height" (click)="openHIIT()">
+        <ion-row class="header-icon">
+          <span>
+            <ion-icon slot="icon-only" color="light" mode="ios" name="pricetag"></ion-icon>
+          </span>
+        </ion-row>
+        <ion-row class="header-title">
+          <span>
+            HIIT Planner
+          </span>
+        </ion-row>
+      </ion-row>
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="switchBMIHIIT && !bmiResultState">
+
+    <form #bmiData="ngForm" id="bmiData" novalidate>
+      <ion-row class="item-part">
+        <ion-col size="6">
+          <ion-row class="full-height">
+            <ion-row>
+              Height
+            </ion-row>
+            <ion-row>
+              <input type="number" required [(ngModel)]="inputBMIData.height" name="height" placeholder="in metres" />
+            </ion-row>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-row class="full-height">
+            <ion-row>
+              Weight
+            </ion-row>
+            <ion-row>
+              <input type="number" required [(ngModel)]="inputBMIData.weight" name="weight" placeholder="in KG" />
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-row>
+              Gender
+            </ion-row>
+            <ion-row>
+              <ion-select required [(ngModel)]="inputBMIData.gender" name="gender">
+                <ion-select-option value="Female">Female</ion-select-option>
+                <ion-select-option value="Male">Male</ion-select-option>
+              </ion-select>
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="6">
+          <ion-row class="full-height">
+            <ion-row>
+              Dream Weight
+            </ion-row>
+            <ion-row>
+              <input type="number" required [(ngModel)]="inputBMIData.dreamWeight" name="dreamWeight" placeholder="in KG" />
+            </ion-row>
+          </ion-row>
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-row class="full-height">
+            <ion-row>
+              Age
+            </ion-row>
+            <ion-row>
+              <input type="number" required [(ngModel)]="inputBMIData.age" name="age" placeholder="in whole number" />
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-row>
+              Excercise Frequency
+            </ion-row>
+            <ion-row>
+              <ion-select required [(ngModel)]="inputBMIData.exercise" name="exercise">
+                <ion-select-option value="Hardly Exercise">Hardly Exercise</ion-select-option>
+                <ion-select-option value="Exercise 1 to 2 times a week">Exercise 1 to 2 times a week</ion-select-option>
+                <ion-select-option value="Exercise 3 to 5 times a week">Exercise 3 to 5 times a week</ion-select-option>
+                <ion-select-option value="Exercise 6 to 7 times a week">Exercise 6 to 7 times a week</ion-select-option>
+                <ion-select-option value="Intensive Exercise more than 7 times a week">
+                  Intensive Exercise more than 7 times a week
+                </ion-select-option>
+              </ion-select>
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-button mode="ios" out-line color="light" (click)="bmiSubmit(bmiData)">
+              Calculate
+            </ion-button>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+    </form>
+  </ion-row>
+
+  <ion-row class="custom-modal-container" *ngIf="switchBMIHIIT && bmiResultState">
+    <ion-row class="result-modal">
+      <ion-row class="modal-header">
+        <ion-col size="2">
+          <ion-row class="full-height">
+            <ion-icon (click)="closeModal()" color="dark" size="default" name="close-circle"></ion-icon>
+          </ion-row>
+        </ion-col>
+        <ion-col size="8">
+          <ion-row class="full-height">
+            <span>
+              Result
+            </span>
+          </ion-row>
+        </ion-col>
+        <!-- <ion-toolbar mode="ios">
+          <ion-buttons slot="secondary">
+            <ion-button>
+              <ion-icon slot="icon-only" color="dark" size="default" name="close-circle"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>
+            Result
+          </ion-title>
+        </ion-toolbar> -->
+      </ion-row>
+      <ion-row class="modal-body">
+        <ion-row class="each-modal">
+          <span>
+            You are {{resultBMIData.weightState}}
+          </span>
+        </ion-row>
+        <ion-row class="each-modal">
+          <span>
+            <strong>BMI:</strong>{{resultBMIData.bmi}}
+          </span>
+        </ion-row>
+        <ion-row class="each-modal">
+          <span>
+            <strong>BMR:</strong>{{resultBMIData.bmr}}
+          </span>
+        </ion-row>
+        <ion-row class="each-modal">
+          <span>
+            <strong>Calories to maintain weight:</strong>{{resultBMIData.maintainWeight}}
+          </span>
+        </ion-row>
+        <ion-row class="each-modal">
+          <span *ngIf="resultBMIData.reduce">
+            <strong>To achieve your target weight:</strong>You need to lose {{resultBMIData.achieveWeight}}kg
+          </span>
+          <span *ngIf="!resultBMIData.reduce">
+            <strong>To achieve your target weight:</strong>You need to get {{resultBMIData.achieveWeight}}kg
+          </span>
+        </ion-row>
+        <ion-row class="each-modal">
+          <span>
+            <strong>Days to target weight (at 500 cal. per day):</strong>{{resultBMIData.daysWeight}}
+          </span>
+        </ion-row>
+      </ion-row>
+      <ion-row class="modal-footer">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <span>
+              Copyright 2018 OTBS
+            </span>
+          </ion-row>
+        </ion-col>
+        <!-- <ion-toolbar mode="ios">
+          <ion-title>
+            Copyright 2018 OTBS
+          </ion-title>
+        </ion-toolbar> -->
+      </ion-row>
+    </ion-row>
+  </ion-row>
+
+  <ion-row *ngIf="!switchBMIHIIT && !hiitResultState">
+
+    <form #hiitData="ngForm" id="hiitData" novalidate>
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-row>
+              Excercise Time
+            </ion-row>
+            <ion-row>
+              <input type="number" required [(ngModel)]="inputHIITData.exerciseTime" name="exerciseTime" placeholder="in minutes" />
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-row>
+              Repetitions
+            </ion-row>
+            <ion-row>
+              <input type="number" required [(ngModel)]="inputHIITData.repotition" name="repotition" placeholder="in whole numbers" />
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-row>
+          Work-to-Rest Ratio
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-row class="full-height">
+              <ion-row>
+                <input type="number" required [(ngModel)]="inputHIITData.work" name="work" placeholder="Work" />
+              </ion-row>
+            </ion-row>
+          </ion-col>
+
+          <ion-col size="6">
+            <ion-row class="full-height">
+              <ion-row>
+                <input type="number" required [(ngModel)]="inputHIITData.rest" name="rest" placeholder="Rest" />
+              </ion-row>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-row>
+              Excercise
+            </ion-row>
+            <ion-row>
+              <ion-select required [(ngModel)]="inputHIITData.exercise" name="exercise">
+                <ion-select-option value="Standing Mountain Climbers">Standing Mountain Climbers</ion-select-option>
+                <ion-select-option value="Push Ups">Push Ups</ion-select-option>
+                <ion-select-option value="Speed Squats">Speed Squats</ion-select-option>
+                <ion-select-option value="Plank">Plank</ion-select-option>
+              </ion-select>
+            </ion-row>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="item-part">
+        <ion-col size="12">
+          <ion-row class="full-height">
+            <ion-button mode="ios" out-line color="light" (click)="hiitSubmit(hiitData)">
+              Plan
+            </ion-button>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+    </form>
+
+    <ion-row class="item-part">
+      <ion-col size="6">
+        <ion-row class="full-height">
+          <ion-button mode="ios" out-line color="light" (click)="loadData()">
+            Load from Cloud
+          </ion-button>
+        </ion-row>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-row class="full-height">
+          <ion-button mode="ios" out-line color="light">
+            Save to Cloud
+          </ion-button>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+  </ion-row>
+
+  <ion-row class="hiit-result" *ngIf="!switchBMIHIIT && hiitResultState">
+
+    <ion-row class="column-title">
+      <ion-col size="2">
+        <ion-row class="full-height">
+          <span>
+            <strong>Rep</strong>
+          </span>
+        </ion-row>
+      </ion-col>
+      <ion-col size="7">
+        <ion-row class="full-height">
+          <span>
+            <strong>Standing Mountain Climbers (sec.)</strong>
+          </span>
+        </ion-row>
+      </ion-col>
+      <ion-col size="3">
+        <ion-row class="full-height">
+          <span>
+            <strong>Rest(sec.)</strong>
+          </span>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="column-detail" *ngFor="let list of resultHIITData.listData; let i = index">
+      <ion-col size="2">
+        <ion-row class="full-height">
+          <span>
+            {{i+1}}
+          </span>
+        </ion-row>
+      </ion-col>
+      <ion-col size="7">
+        <ion-row class="full-height">
+          <span>
+            {{list.workout}}
+          </span>
+        </ion-row>
+      </ion-col>
+      <ion-col size="3">
+        <ion-row class="full-height">
+          <span>
+            {{list.rest}}
+          </span>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="column-detail">
+      <ion-col size="12">
+        <ion-row class="full-height">
+          <span>
+            Total Exercise Time: {{resultHIITData.totalExerciseTime}} minutes
+          </span>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="column-detail">
+      <ion-col size="12">
+        <ion-row class="full-height">
+          <span>
+            Total Rest Time: {{resultHIITData.totalRestTime}} minutes
+          </span>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="column-detail">
+      <ion-col size="12">
+        <ion-row class="full-height">
+          <span>
+            Total HIIT Time: {{resultHIITData.totalHiitTime}} minutes
+          </span>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+  </ion-row>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar color="light" mode="ios">
+    <ion-title>Copyright 2018 OTBS</ion-title>
+  </ion-toolbar>
+</ion-footer>
